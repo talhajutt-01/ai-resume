@@ -9,13 +9,33 @@ export const Container = styled.div`
   width: 678px;
   max-width: 100%;
   min-height: 400px;
+`;
 
-  @media (max-width: 768px) {
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
+export const SignUpContainer = styled.div`
+  position: absolute;
+  top: 0;
+  height: 100%;
+  transition: all 0.6s ease-in-out;
+  left: 0;
+  width: 50%;
+  opacity: 1;
+  z-index: 5;
+  ${props => (props.signIn !== true ? `
+    transform: translateX(100%);
+    opacity: 0;
+    z-index: 1;
+  ` : null)}
+`;
+
+export const SignInContainer = styled.div`
+  position: absolute;
+  top: 0;
+  height: 100%;
+  transition: all 0.6s ease-in-out;
+  left: 0;
+  width: 50%;
+  z-index: 2;
+  ${props => (props.signIn !== true ? `transform: translateX(100%);` : null)}
 `;
 
 export const FormContainer = styled.form`
@@ -27,10 +47,6 @@ export const FormContainer = styled.form`
   padding: 0 50px;
   height: 100%;
   text-align: center;
-
-  @media (max-width: 768px) {
-    padding: 0 20px;
-  }
 `;
 
 export const Title = styled.h1`
@@ -86,12 +102,11 @@ export const OverlayContainer = styled.div`
   overflow: hidden;
   transition: transform 0.6s ease-in-out;
   z-index: 100;
+  ${props => (props.signIn !== true ? `transform: translateX(-100%);` : null)}
 
   @media (max-width: 768px) {
     width: 100%;
     left: 0;
-    height: 50%;
-    transform: translateY(0);
   }
 `;
 
@@ -109,12 +124,11 @@ export const Overlay = styled.div`
   width: 200%;
   transform: translateX(0);
   transition: transform 0.6s ease-in-out;
+  ${props => (props.signIn !== true ? `transform: translateX(50%);` : null)}
 
   @media (max-width: 768px) {
     width: 100%;
     left: 0;
-    height: 50%;
-    transform: translateY(0);
   }
 `;
 
@@ -131,30 +145,17 @@ export const OverlayPanel = styled.div`
   width: 50%;
   transform: translateX(0);
   transition: transform 0.6s ease-in-out;
-
-  @media (max-width: 768px) {
-    width: 100%;
-    height: 50%;
-    transform: translateY(0);
-  }
 `;
 
 export const LeftOverlayPanel = styled(OverlayPanel)`
   transform: translateX(-20%);
-
-  @media (max-width: 768px) {
-    transform: translateY(-20%);
-  }
+  ${props => (props.signIn !== true ? `transform: translateX(0);` : null)}
 `;
 
 export const RightOverlayPanel = styled(OverlayPanel)`
   right: 0;
   transform: translateX(0);
-
-  @media (max-width: 768px) {
-    top: 50%;
-    transform: translateY(0);
-  }
+  ${props => (props.signIn !== true ? `transform: translateX(20%);` : null)}
 `;
 
 export const Paragraph = styled.p`
@@ -164,9 +165,11 @@ export const Paragraph = styled.p`
   letter-spacing: 0.5px;
   margin: 20px 0 30px;
 `;
-
+// eslint-disable-next-line
 export default {
   Container,
+  SignUpContainer,
+  SignInContainer,
   FormContainer,
   Title,
   Input,
