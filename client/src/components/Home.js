@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Loading from "./Loading";
+import Logout from "./Logout";
 import axios from "axios";
 
 const Home = ({ setResult }) => {
@@ -39,7 +40,9 @@ const Home = ({ setResult }) => {
 		formData.append("currentTechnologies", currentTechnologies);
 		formData.append("workHistory", JSON.stringify(companyInfo));
 		axios
-			.post("http://localhost:4000/resume/create", formData, {})
+			.post("http://localhost:4000/resume/create", formData, {headers: {
+				'Content-Type': 'multipart/form-data'
+			}})
 			.then((res) => {
 				if (res.data.message) {
 					setResult(res.data.data);
@@ -53,7 +56,7 @@ const Home = ({ setResult }) => {
 		return <Loading />;
 	}
 	return (
-		<div className='app'>
+		<div className='app'> <Logout />
 			<h1>Ai Resume Builder</h1>
 			<p>Generate a resume with Ai in few seconds</p>
 			<form

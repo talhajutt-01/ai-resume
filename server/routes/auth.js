@@ -7,6 +7,8 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 const JWT_SECRET = "ILOVECODING";
 
+
+
 router.post(
   '/signup',
   [
@@ -98,4 +100,27 @@ router.post(
   }
 );
 
+
+router.post('/logout', (req, res) => {
+  try {
+      // Clear the authentication token from the client
+      res.clearCookie('token'); // Assumes the token is stored in a cookie named 'token'
+      
+      res.status(200).json({ message: 'User logged out successfully' });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
+router.post('/logout', (req, res) => {
+  try {
+      // Clear the authentication token from the client
+      res.clearCookie('token'); // Assumes the token is stored in a cookie named 'token'
+      
+      res.status(200).json({ message: 'User logged out successfully' });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
 module.exports = router;
