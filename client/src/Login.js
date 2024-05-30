@@ -13,6 +13,13 @@ function Login() {
 
   const navigate = useNavigate();
 
+  const getApiUrl = () => {
+    if (process.env.NODE_ENV === 'development') {
+      return process.env.REACT_APP_API_URL_LOCAL;
+    }
+    return process.env.REACT_APP_API_URL_DEPLOYED;
+  };
+
   const handleSignInSubmit = async (e) => {
     e.preventDefault();
 
@@ -23,7 +30,7 @@ function Login() {
     }
 
     try {
-      const response = await fetch("http://localhost:4000/api/auth/login", {
+      const response = await fetch(`${getApiUrl()}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -42,15 +49,12 @@ function Login() {
       console.log(json);
 
       // Handle login success
-      
       setError("");
-      navigate("/Home")
+      navigate("/Home");
       alert("Login successful!");
-     
 
     } catch (error) {
       console.error("Error during login:", error.message);
-      // Handle error here
       setError("Login failed. Please check your credentials.");
       alert("Please Enter correct Details:", error.message);
     }
@@ -70,7 +74,7 @@ function Login() {
     }
 
     try {
-      const response = await fetch("http://localhost:4000/api/auth/signup", {
+      const response = await fetch(`${getApiUrl()}/api/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -99,14 +103,12 @@ function Login() {
 
         // Handle signup success
         setError("");
-        navigate("/Home")
+        navigate("/Home");
         alert("Signup successful!");
-       
       }
     } catch (error) {
       console.error("Error during signup:", error.message);
       setError("Signup failed. Please try again.");
-      // Handle other errors here
     }
   };
 

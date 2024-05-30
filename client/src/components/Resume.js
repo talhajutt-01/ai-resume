@@ -20,8 +20,8 @@ const Resume = ({ result }) => {
 	};
 
 	return (
-		<>
-			<button onClick={handlePrint}>Print Page</button>
+		< div style={{height: '100vh'}}>
+			<button style={{ marginTop: '40px', marginLeft: '100px' }} onClick={handlePrint}>Print Page</button>
 			<main className='container' ref={componentRef}>
 				<header className='header'>
 					<div>
@@ -80,7 +80,7 @@ const Resume = ({ result }) => {
 					</div>
 				</div>
 			</main>
-		</>
+		</div>
 	);
 };
 

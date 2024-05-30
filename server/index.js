@@ -52,12 +52,22 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static("uploads"));
 app.use(express.json());
 
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://10.10.1.148:3000'
+];
 const corsOptions = {
-  origin: 'http://localhost:3000', // Update with your frontend URL
-  credentials: true, // Allow credentials such as cookies
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true // Allow credentials such as cookies
 };
-app.use(cors(corsOptions));
 
+app.use(cors(corsOptions));
 // Generate a unique ID for each resume entry
 const generateID = () => Math.random().toString(36).substring(2, 10);
 
