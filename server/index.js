@@ -7,7 +7,10 @@ const app = express();
 const PORT = 4000;
 const connectDB = require('./db');
 const authRoutes = require('./routes/auth');
+const paymentRoutes = require('./routes/Payment');
+const userRoutes = require('./routes/User');
 require('dotenv').config();
+
 
 // Initialize Google Generative AI
 const apiKey = process.env.GEMINI_API_KEY;
@@ -160,7 +163,8 @@ app.post("/resume/create", upload.single("headshotImage"), async (req, res) => {
 
 // Authentication routes
 app.use('/api/auth', authRoutes);
-
+app.use('/api/payment', paymentRoutes);
+app.use('/api/users', userRoutes);
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);

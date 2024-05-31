@@ -7,7 +7,24 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 const JWT_SECRET = "ILOVECODING";
 
+// Middleware to authenticate user
+const authenticateUser = async (req, res, next) => {
+  try {
+    const token = req.header('Authorization').replace('Bearer ', '');
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const user = await User.findOne({ _id: decoded.id, 'tokens.token': token });
 
+    if (!user) {
+      throw new Error();
+    }
+
+    req.token = token;
+    req.user = user;
+    next();
+  } catch (error) {
+    res.status(401).json({ error: 'Please authenticate' });
+  }
+};
 
 router.post(
   '/signup',
@@ -31,23 +48,22 @@ router.post(
       }
 
       const salt = await bcrypt.genSaltSync(10);
-      const secpass = await bcrypt.hash(req.body.password, salt);
+      const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
       // Create a new user
       const newUser = new User({
         username: req.body.username,
         email: req.body.email,
-        password: secpass,
+        password: hashedPassword,
       });
 
       // Save the user to the database
       await newUser.save();
 
-      const data = {
-        id: newUser.id,
-      };
-      const authtoken = jwt.sign(data, JWT_SECRET);
-      res.status(201).json({ authtoken: authtoken, message: 'User registered successfully' });
+      // Generate JWT token
+      const token = jwt.sign({ id: newUser.id }, JWT_SECRET);
+
+      res.status(201).json({ token, message: 'User registered successfully' });
 
     } catch (error) {
       console.error(error);
@@ -76,22 +92,21 @@ router.post(
       }
 
       const { email, password } = req.body;
-      let user = await User.findOne({ email });
+      const user = await User.findOne({ email });
 
       if (!user) {
-        return res.status(404).json({ errors: "Please try to login with correct details" });
+        return res.status(404).json({ errors: "Invalid credentials" });
       }
 
-      const passcompare = await bcrypt.compare(password, user.password);
-      if (!passcompare) {
-        return res.status(404).json({ errors: "Please try to login with correct details" });
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        return res.status(404).json({ errors: "Invalid credentials" });
       }
 
-      const data = {
-        id: user.id,
-      };
-      const authtoken = jwt.sign(data, JWT_SECRET);
-      res.status(201).json({ authtoken: authtoken, message: 'User login successfully' });
+      // Generate JWT token
+      const token = jwt.sign({ id: user.id }, JWT_SECRET);
+
+      res.status(201).json({ token, message: 'User login successfully' });
 
     } catch (error) {
       console.error(error);
@@ -100,27 +115,13 @@ router.post(
   }
 );
 
+router.get('/current', authenticateUser, async (req, res) => {
+  try {
+    const user = req.user; // User object is available from the middleware
+    res.status(200).json({ userId: user._id, tokens: user.tokens });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err });
+  }
+});
 
-router.post('/logout', (req, res) => {
-  try {
-      // Clear the authentication token from the client
-      res.clearCookie('token'); // Assumes the token is stored in a cookie named 'token'
-      
-      res.status(200).json({ message: 'User logged out successfully' });
-  } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Internal server error' });
-  }
-});
-router.post('/logout', (req, res) => {
-  try {
-      // Clear the authentication token from the client
-      res.clearCookie('token'); // Assumes the token is stored in a cookie named 'token'
-      
-      res.status(200).json({ message: 'User logged out successfully' });
-  } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Internal server error' });
-  }
-});
 module.exports = router;
