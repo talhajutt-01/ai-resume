@@ -57,7 +57,7 @@ app.use(express.json());
 
 const allowedOrigins = [
   'http://localhost:3000',
-  'http://10.10.1.148:3000'
+  '143.110.224.142:4000'
 ];
 const corsOptions = {
   origin: function (origin, callback) {
@@ -118,7 +118,7 @@ app.post("/resume/create", upload.single("headshotImage"), async (req, res) => {
   const newEntry = {
     id: generateID(),
     fullName,
-    image_url: `http://localhost:4000/uploads/${req.file.filename}`,
+    image_url: `143.110.224.142:4000/uploads/${req.file.filename}`,
     currentPosition,
     currentLength,
     currentTechnologies,
