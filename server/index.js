@@ -10,8 +10,13 @@ const authRoutes = require('./routes/auth');
 const paymentRoutes = require('./routes/Payment');
 const userRoutes = require('./routes/User');
 require('dotenv').config();
+// Serve the static files from the client/build directory
+app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
 
-
+// Handle all GET requests and return the React app
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
+});
 // Initialize Google Generative AI
 const apiKey = process.env.GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(apiKey);
@@ -54,6 +59,7 @@ connectDB();
 app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static("uploads"));
 app.use(express.json());
+
 
 const allowedOrigins = [
   'http://localhost:3000',
